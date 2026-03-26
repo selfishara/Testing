@@ -1,6 +1,7 @@
 package com.selfishara.test.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.selfishara.test.model.Character
 import com.selfishara.test.model.Race
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,9 @@ class CharacterViewModel : ViewModel() {
 
     private val _selectedSkills = MutableStateFlow(setOf<String>())
     val selectedSkills: StateFlow<Set<String>> = _selectedSkills.asStateFlow()
+
+    private val _savedCharacters = MutableStateFlow<List<Character>>(emptyList())
+    val savedCharacters: StateFlow<List<Character>> = _savedCharacters.asStateFlow()
 
     fun editUserName(name: String) {
         _userName.value = name
@@ -52,5 +56,35 @@ class CharacterViewModel : ViewModel() {
         } else {
             _selectedSkills.value + skill
         }
+    }
+
+    fun saveCharacter() {
+        if (_userName.value.isBlank() || _userNickName.value.isBlank() || _selectedRace.value == null) {
+            return
+        }
+
+        val newCharacter = Character(
+            name = _userName.value.trim(),
+            nickName = _userNickName.value.trim(),
+            race = _selectedRace.value,
+            gender = _selectedGender.value,
+            skills = _selectedSkills.value
+        )
+
+        _savedCharacters.value = _savedCharacters.value + newCharacter
+        clearForm()
+    }
+
+    fun deleteCharacter(character: Character) {
+        _savedCharacters.value = _savedCharacters.value - character
+    }
+
+    private fun clearForm() {
+        _userName.value = ""
+        _userNickName.value = ""
+        _selectedRace.value = null
+        _expanded.value = false
+        _selectedGender.value = ""
+        _selectedSkills.value = emptySet()
     }
 }

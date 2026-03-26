@@ -73,4 +73,18 @@ class CharacterViewModelTest {
         viewModel.skillSelectionChanged("Magic")
         assertFalse(viewModel.selectedSkills.value.contains("Magic"))
     }
+
+    @Test
+    fun deleteCharacter_existingCharacter_removesCharacterFromList() {
+        viewModel.editUserName("Sara")
+        viewModel.editUserNickName("Shadow")
+        viewModel.raceSelection(Race.ELF)
+        viewModel.saveCharacter()
+
+        val savedCharacter = viewModel.savedCharacters.value.first()
+
+        viewModel.deleteCharacter(savedCharacter)
+
+        assertTrue(viewModel.savedCharacters.value.isEmpty())
+    }
 }
